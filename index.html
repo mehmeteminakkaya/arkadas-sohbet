@@ -5,75 +5,256 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arkadaş Sohbet</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <div class="chat-header">
-            <h1>Arkadaş Sohbet</h1>
-            <div class="user-info">
-                <input type="text" id="username" placeholder="Kullanıcı adınız">
-                <button id="set-username">Kaydet</button>
+    <div class="app-container">
+        <!-- Sol Panel: Sunucular ve Kanallar -->
+        <div class="servers-panel">
+            <div class="servers-list">
+                <div class="server-icon home-icon active" data-server-id="home">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="server-divider"></div>
+                <div class="server-icon" data-server-id="genel">
+                    <span>GS</span>
+                    <div class="server-tooltip">Genel Sunucu</div>
+                </div>
+                <div class="server-icon add-server">
+                    <i class="fas fa-plus"></i>
+                    <div class="server-tooltip">Sunucu Ekle</div>
+                </div>
             </div>
         </div>
-        
-        <!-- Oda Yönetimi -->
-        <div class="room-manager">
-            <div class="create-room">
-                <input type="text" id="room-name" placeholder="Oda adı">
-                <button id="create-room-btn">Oda Oluştur</button>
+
+        <!-- Sol Orta Panel: Kanallar ve Üyeler -->
+        <div class="channels-panel">
+            <div class="server-header">
+                <h3 id="current-server-name">Arkadaş Sohbet</h3>
+                <i class="fas fa-chevron-down"></i>
             </div>
-            <div class="join-room">
-                <input type="text" id="room-id" placeholder="Oda ID">
-                <button id="join-room-btn">Odaya Katıl</button>
+            
+            <div class="channels-container">
+                <div class="channels-category">
+                    <div class="category-header">
+                        <i class="fas fa-chevron-down"></i>
+                        <span>METİN KANALLARI</span>
+                    </div>
+                    <div class="channel-list">
+                        <div class="channel active" data-channel-id="genel">
+                            <i class="fas fa-hashtag"></i>
+                            <span>genel</span>
+                        </div>
+                        <div class="channel" data-channel-id="sohbet">
+                            <i class="fas fa-hashtag"></i>
+                            <span>sohbet</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="channels-category">
+                    <div class="category-header">
+                        <i class="fas fa-chevron-down"></i>
+                        <span>SESLİ KANALLAR</span>
+                    </div>
+                    <div class="channel-list">
+                        <div class="channel voice-channel" data-channel-id="sesli-sohbet">
+                            <i class="fas fa-volume-up"></i>
+                            <span>Sesli Sohbet</span>
+                            <div class="channel-users-count">2</div>
+                        </div>
+                        <div class="channel voice-channel" data-channel-id="müzik">
+                            <i class="fas fa-volume-up"></i>
+                            <span>Müzik</span>
+                            <div class="channel-users-count">0</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div id="current-room">
-                <span>Şu anki oda: <b id="room-display">Genel</b></span>
-                <button id="leave-room-btn" class="hidden">Odadan Ayrıl</button>
+            
+            <div class="user-controls">
+                <div class="user-avatar">
+                    <img id="user-avatar-img" src="https://ui-avatars.com/api/?name=Kullanıcı&background=random" alt="Avatar">
+                    <div class="status-indicator online"></div>
+                </div>
+                <div class="user-info">
+                    <div class="username" id="current-username">Kullanıcı</div>
+                    <div class="user-tag">#<span id="user-tag">0000</span></div>
+                </div>
+                <div class="user-actions">
+                    <i class="fas fa-microphone" id="mic-toggle"></i>
+                    <i class="fas fa-headphones" id="headphone-toggle"></i>
+                    <i class="fas fa-cog" id="settings-button"></i>
+                </div>
             </div>
         </div>
-        
-        <div class="chat-container">
+
+        <!-- Ana Panel: Sohbet Alanı -->
+        <div class="chat-panel">
+            <div class="chat-header">
+                <div class="chat-channel-info">
+                    <i class="fas fa-hashtag"></i>
+                    <span id="current-channel-name">genel</span>
+                </div>
+                <div class="chat-channel-topic">Genel sohbet kanalı - Sohbete başlamak için mesaj yazın</div>
+                <div class="chat-actions">
+                    <i class="fas fa-bell"></i>
+                    <i class="fas fa-thumbtack"></i>
+                    <i class="fas fa-user-friends"></i>
+                    <div class="search-container">
+                        <input type="text" placeholder="Ara">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <i class="fas fa-inbox"></i>
+                    <i class="fas fa-question-circle"></i>
+                </div>
+            </div>
+            
             <div class="chat-messages" id="chat-messages">
                 <!-- Mesajlar burada görüntülenecek -->
             </div>
             
-            <div class="chat-input">
-                <input type="text" id="message-input" placeholder="Mesajınızı yazın...">
-                <button id="send-button">Gönder</button>
+            <div class="message-input-container">
+                <div class="upload-button">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <div class="message-input-wrapper">
+                    <input type="text" id="message-input" placeholder="genel kanalına mesaj gönder...">
+                    <div class="message-input-actions">
+                        <i class="fas fa-gift"></i>
+                        <i class="fas fa-file-image"></i>
+                        <i class="fas fa-smile"></i>
+                    </div>
+                </div>
             </div>
         </div>
-        
-        <div class="side-panel">
-            <div class="online-users">
-                <h3>Çevrimiçi Arkadaşlar</h3>
-                <ul id="users-list">
-                    <!-- Çevrimiçi kullanıcılar burada listelenecek -->
-                </ul>
+
+        <!-- Sağ Panel: Kullanıcı Listesi -->
+        <div class="members-panel">
+            <div class="members-search">
+                <input type="text" placeholder="Kullanıcı Ara">
             </div>
             
-            <!-- Sesli Konuşma Bölümü -->
-            <div class="voice-chat">
-                <h3>Sesli Konuşma</h3>
-                <div class="voice-controls">
-                    <button id="start-voice-btn" class="voice-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
-                            <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
-                        </svg>
-                        Mikrofonu Aç
-                    </button>
-                    <button id="stop-voice-btn" class="voice-btn hidden">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
-                            <path d="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28zm-4.02.17c0-.06.02-.11.02-.17V5c0-1.66-1.34-3-3-3S8 3.34 8 5v.18l7 7.1zM4.27 3L3 4.27l6.01 6.01V11c0 1.66 1.33 3 2.99 3 .22 0 .44-.03.65-.08l1.66 1.66c-.71.33-1.5.52-2.31.52-2.76 0-5.3-2.1-5.3-5.1H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c.91-.13 1.77-.45 2.54-.9L19.73 21 21 19.73 4.27 3z"/>
-                        </svg>
-                        Mikrofonu Kapat
-                    </button>
+            <div class="members-container">
+                <div class="members-group">
+                    <div class="members-group-header">ÇEVRİMİÇİ - <span id="online-count">0</span></div>
+                    <div class="members-list" id="online-users-list">
+                        <!-- Çevrimiçi kullanıcılar burada listelenecek -->
+                    </div>
                 </div>
-                <div class="active-speakers" id="active-speakers">
-                    <!-- Aktif konuşmacılar burada gösterilecek -->
+                
+                <div class="members-group">
+                    <div class="members-group-header">ÇEVRİMDIŞI - <span id="offline-count">0</span></div>
+                    <div class="members-list" id="offline-users-list">
+                        <!-- Çevrimdışı kullanıcılar burada listelenecek -->
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
+    
+    <!-- Modeller ve Diyaloglar -->
+    <div class="modal" id="server-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Sunucu Oluştur</h3>
+                <i class="fas fa-times close-modal"></i>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Sunucu İsmi</label>
+                    <input type="text" id="server-name-input" placeholder="Yeni Sunucu">
+                </div>
+                <div class="form-group">
+                    <label>Sunucu İkonu (İsteğe Bağlı)</label>
+                    <div class="server-icon-upload">
+                        <i class="fas fa-camera"></i>
+                        <span>Resim Yükle</span>
+                        <input type="file" id="server-icon-input" accept="image/*">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel close-modal">İptal</button>
+                <button class="btn btn-create" id="create-server-btn">Sunucu Oluştur</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="join-server-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Sunucuya Katıl</h3>
+                <i class="fas fa-times close-modal"></i>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Davet Bağlantısı</label>
+                    <input type="text" id="server-invite-input" placeholder="Davet bağlantısını yapıştırın">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel close-modal">İptal</button>
+                <button class="btn btn-join" id="join-server-btn">Katıl</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="user-settings-modal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3>Kullanıcı Ayarları</h3>
+                <i class="fas fa-times close-modal"></i>
+            </div>
+            <div class="modal-body settings-body">
+                <div class="settings-sidebar">
+                    <div class="settings-section active">Hesabım</div>
+                    <div class="settings-section">Profil</div>
+                    <div class="settings-section">Gizlilik & Güvenlik</div>
+                    <div class="settings-section">Uygulamalar</div>
+                    <div class="settings-divider"></div>
+                    <div class="settings-section">Çıkış</div>
+                </div>
+                <div class="settings-content">
+                    <div class="settings-header">Hesabım</div>
+                    <div class="settings-account-info">
+                        <div class="user-avatar-large">
+                            <img id="settings-avatar-img" src="https://ui-avatars.com/api/?name=Kullanıcı&background=random" alt="Avatar">
+                            <div class="avatar-overlay">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                        </div>
+                        <div class="account-details">
+                            <div class="form-group">
+                                <label>Kullanıcı Adı</label>
+                                <input type="text" id="settings-username-input" placeholder="Kullanıcı adı">
+                            </div>
+                            <div class="form-group">
+                                <label>E-posta</label>
+                                <input type="email" id="settings-email-input" placeholder="E-posta">
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-save" id="save-settings-btn">Değişiklikleri Kaydet</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="context-menu" id="channel-context-menu">
+        <div class="context-menu-item">
+            <i class="fas fa-eye"></i>
+            <span>Okuma Özel Oda</span>
+        </div>
+        <div class="context-menu-item">
+            <i class="fas fa-bell"></i>
+            <span>Bildirimleri Esas Ayarlara Sıfırla</span>
+        </div>
+        <div class="context-menu-item danger">
+            <i class="fas fa-trash"></i>
+            <span>Kanalı Sil</span>
         </div>
     </div>
 
@@ -117,5 +298,6 @@
     
     <!-- Ana uygulama script'i -->
     <script src="script.js"></script>
+    <script src="discord-like.js"></script>
 </body>
 </html> 
