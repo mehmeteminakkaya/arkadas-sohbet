@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arkadaş Sohbet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="chat-header">
+            <h1>Arkadaş Sohbet</h1>
+            <div class="user-info">
+                <input type="text" id="username" placeholder="Kullanıcı adınız">
+                <button id="set-username">Kaydet</button>
+            </div>
+        </div>
+        
+        <!-- Oda Yönetimi -->
+        <div class="room-manager">
+            <div class="create-room">
+                <input type="text" id="room-name" placeholder="Oda adı">
+                <button id="create-room-btn">Oda Oluştur</button>
+            </div>
+            <div class="join-room">
+                <input type="text" id="room-id" placeholder="Oda ID">
+                <button id="join-room-btn">Odaya Katıl</button>
+            </div>
+            <div id="current-room">
+                <span>Şu anki oda: <b id="room-display">Genel</b></span>
+                <button id="leave-room-btn" class="hidden">Odadan Ayrıl</button>
+            </div>
+        </div>
+        
+        <div class="chat-container">
+            <div class="chat-messages" id="chat-messages">
+                <!-- Mesajlar burada görüntülenecek -->
+            </div>
+            
+            <div class="chat-input">
+                <input type="text" id="message-input" placeholder="Mesajınızı yazın...">
+                <button id="send-button">Gönder</button>
+            </div>
+        </div>
+        
+        <div class="side-panel">
+            <div class="online-users">
+                <h3>Çevrimiçi Arkadaşlar</h3>
+                <ul id="users-list">
+                    <!-- Çevrimiçi kullanıcılar burada listelenecek -->
+                </ul>
+            </div>
+            
+            <!-- Sesli Konuşma Bölümü -->
+            <div class="voice-chat">
+                <h3>Sesli Konuşma</h3>
+                <div class="voice-controls">
+                    <button id="start-voice-btn" class="voice-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+                            <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                        </svg>
+                        Mikrofonu Aç
+                    </button>
+                    <button id="stop-voice-btn" class="voice-btn hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+                            <path d="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28zm-4.02.17c0-.06.02-.11.02-.17V5c0-1.66-1.34-3-3-3S8 3.34 8 5v.18l7 7.1zM4.27 3L3 4.27l6.01 6.01V11c0 1.66 1.33 3 2.99 3 .22 0 .44-.03.65-.08l1.66 1.66c-.71.33-1.5.52-2.31.52-2.76 0-5.3-2.1-5.3-5.1H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c.91-.13 1.77-.45 2.54-.9L19.73 21 21 19.73 4.27 3z"/>
+                        </svg>
+                        Mikrofonu Kapat
+                    </button>
+                </div>
+                <div class="active-speakers" id="active-speakers">
+                    <!-- Aktif konuşmacılar burada gösterilecek -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+
+    <!-- PeerJS (WebRTC için) -->
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    
+    <!-- Firebase yapılandırması -->
+    <script>
+    // Firebase yapılandırma bilgileri
+    const firebaseConfig = {
+      apiKey: "AIzaSyA-7Cin9UWYbz3LPQSpkcYcq62ifzfztfg",
+      authDomain: "arkadassohbet123.firebaseapp.com",
+      databaseURL: "https://arkadassohbet123-default-rtdb.firebaseio.com",
+      projectId: "arkadassohbet123",
+      storageBucket: "arkadassohbet123.firebasestorage.app",
+      messagingSenderId: "408307287561",
+      appId: "1:408307287561:web:dae931235ab4ca9a5a1ad8",
+      measurementId: "G-WLT71GJ6E0"
+    };
+
+    // Firebase'i başlat
+    firebase.initializeApp(firebaseConfig);
+
+    // Database referansı
+    const database = firebase.database();
+    const storageRef = firebase.storage().ref();
+
+    // PeerJS sunucu yapılandırması - Resmi PeerJS sunucusunu kullan
+    const peerConfig = {
+        // Herhangi bir host veya port belirtmeden, doğrudan PeerJS'in kendi sunucusunu kullanıyoruz
+        debug: 3
+    };
+
+    console.log("Firebase ve PeerJS yapılandırması yüklendi!");
+    </script>
+    
+    <!-- Ana uygulama script'i -->
+    <script src="script.js"></script>
+</body>
+</html> 
